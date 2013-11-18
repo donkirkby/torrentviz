@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset='utf-8' />
+<meta name="description" content="Visualize the BitTorrent protocol" />
+
+<link rel="stylesheet" type="text/css" media="screen"
+	href="stylesheets/stylesheet.css">
+<title>TorrentViz</title>
+</head>
+
+<body>
+
+	<!-- HEADER -->
+	<div id="header_wrap" class="outer">
+		<header class="inner">
+			<a id="forkme_banner" href="https://github.com/donkirkby/torrentviz">View
+				on GitHub</a>
+
+			<h1 id="project_title">TorrentViz</h1>
+			<h2 id="project_tagline">Visualize the BitTorrent protocol</h2>
+
+			<section id="downloads">
+				<a class="zip_download_link"
+					href="https://github.com/donkirkby/torrentviz/zipball/master">Download
+					this project as a .zip file</a> <a class="tar_download_link"
+					href="https://github.com/donkirkby/torrentviz/tarball/master">Download
+					this project as a tar.gz file</a>
+			</section>
+		</header>
+	</div>
+
+	<!-- MAIN CONTENT -->
+	<div id="main_content_wrap" class="outer">
+		<section id="main_content" class="inner">
+			<canvas id="canvas" width="300" height="150"></canvas>
+		</section>
+	</div>
+
+	<!-- SCRIPTS -->
+	<script
+		src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script src="javascripts/jcanvas.min.js"></script>
+	<script>
+		// Draw a circle on the canvas
+		$("canvas").drawArc({
+			fillStyle : "black",
+			x : 100,
+			y : 100,
+			radius : 50
+		});
+	</script>
+</body>
+</html>
