@@ -1,10 +1,15 @@
 function Node(name) {
     this.name = name;
-    this.pieceCount = 3;
     this.lineWidth = 10;
     this.sendTime = 20;
-    this.bottom = this.pieceCount*this.sendTime;
     this.left = 0;
+    
+    this.setPieceCount = function(pieceCount) {
+        this.pieceCount = pieceCount;
+        this.bottom = this.pieceCount*this.sendTime;
+    }
+    
+    this.setPieceCount(3);
 }
 
 /**
@@ -27,6 +32,7 @@ function Transmission(sender, receiver, pieceNum, startTime) {
     this.outlineColour = "rgb(" + [this.outlineShade-1, 
                                    this.outlineShade-1, 
                                    this.outlineShade-1].join() + ")";
+    this.outlineColour = "black";
     this.shade = ((1+pieceNum) * this.outlineShade - 1) & 255;
     this.colour = "rgb(" + [this.shade, this.shade, this.shade].join() + ")";
     
@@ -65,17 +71,43 @@ function Transmission(sender, receiver, pieceNum, startTime) {
     }
 }
 
+
+
+$(function() {
+    $( "#slider" ).slider({
+        max : 10,
+        value : 3,
+        slide: function( event, ui ) {
+            seed.setPieceCount(ui.value);
+            peer.setPieceCount(ui.value);
+            transmissions = createTransmissions(ui.value);
+            canvas.clearCanvas();
+            drawTransmissions(transmissions);
+        }
+    });
+  });
 var canvas = $("canvas");
 var seed = new Node("seed");
 var peer = new Node("peer");
-peer.left = 50;
-var transmissions = [new Transmission(null, seed, 0, 0),
-                     new Transmission(null, seed, 1, 0),
-                     new Transmission(null, seed, 2, 0),
-                     new Transmission(seed, peer, 0, 0),
-                     new Transmission(seed, peer, 1, 20),
-                     new Transmission(seed, peer, 2, 40)];
-for ( var i in transmissions) {
-    var transmission = transmissions[i];
-    transmission.draw(canvas);
+peer.left = 150;
+function createTransmissions(pieceCount) {
+    var transmissions = [];
+    for (var i = 0; i < pieceCount; i++) {
+        transmissions.push(new Transmission(null, seed, i, 0));
+    }
+    for (var i = 0; i < pieceCount; i++) {
+        transmissions.push(new Transmission(seed, peer, i, 20*i));
+    }
+    
+    return transmissions;
 }
+
+function drawTransmissions(transmissions) {
+    for ( var i in transmissions) {
+        var transmission = transmissions[i];
+        transmission.draw(canvas);
+    }
+}
+
+var transmissions = createTransmissions(3);
+drawTransmissions(transmissions);

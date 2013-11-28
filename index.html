@@ -7,6 +7,10 @@
 
 <link rel="stylesheet" type="text/css" media="screen"
 	href="stylesheets/stylesheet.css">
+<link rel="stylesheet" type="text/css" media="screen"
+    href="stylesheets/torrentviz.css">
+<link rel="stylesheet"
+	href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
 <title>TorrentViz</title>
 </head>
 
@@ -34,6 +38,8 @@
 	<!-- MAIN CONTENT -->
 	<div id="main_content_wrap" class="outer">
 		<section id="main_content" class="inner">
+			<p>Pieces: </p>
+			<div id="slider"></div>
 			<canvas id="canvas" width="300" height="300"></canvas>
 		</section>
 	</div>
@@ -41,7 +47,9 @@
 	<!-- SCRIPTS -->
 	<script
 		src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    <script src="javascripts/jcanvas.min.js"></script>
-    <script src="javascripts/main.js"></script>
+	<script
+		src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+	<script src="javascripts/jcanvas.min.js"></script>
+	<script src="javascripts/main.js"></script>
 </body>
 </html>
