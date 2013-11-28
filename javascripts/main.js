@@ -75,6 +75,7 @@ function Transmission(sender, receiver, pieceNum, startTime) {
 
 $(function() {
     $( "#slider" ).slider({
+        min : 1,
         max : 10,
         value : 3,
         slide: function( event, ui ) {
