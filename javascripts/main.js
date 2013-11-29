@@ -1,15 +1,16 @@
+MAX_PIECES = 10;
+MAX_SEEDS = 3;
+MAX_PEERS = 3;
+var seedCount = 1;
+var peerCount = 2;
+var pieceCount = 3;
+
 function Node(name) {
     this.name = name;
     this.lineWidth = 10;
     this.sendTime = 20;
     this.left = 0;
-    
-    this.setPieceCount = function(pieceCount) {
-        this.pieceCount = pieceCount;
-        this.bottom = this.pieceCount*this.sendTime;
-    }
-    
-    this.setPieceCount(3);
+    this.bottom = MAX_PIECES*this.sendTime;
 }
 
 /**
@@ -28,7 +29,7 @@ function Transmission(sender, receiver, pieceNum, startTime) {
     this.offsetX = 20;
     this.offsetY = 20;
     this.transmissionTime = 20;
-    this.outlineShade = (256/receiver.pieceCount) & 255;
+    this.outlineShade = (256/pieceCount) & 255;
     this.outlineColour = "rgb(" + [this.outlineShade-1, 
                                    this.outlineShade-1, 
                                    this.outlineShade-1].join() + ")";
@@ -71,33 +72,83 @@ function Transmission(sender, receiver, pieceNum, startTime) {
     }
 }
 
-
-
 $(function() {
-    $( "#slider" ).slider({
+    $( "#seed-slider" ).slider({
         min : 1,
-        max : 10,
-        value : 3,
+        max : MAX_SEEDS,
+        value : seedCount,
         slide: function( event, ui ) {
-            seed.setPieceCount(ui.value);
-            peer.setPieceCount(ui.value);
-            transmissions = createTransmissions(ui.value);
+            seedCount = ui.value;
+            createNodes();
+            transmissions = createTransmissions();
             canvas.clearCanvas();
             drawTransmissions(transmissions);
         }
     });
   });
-var canvas = $("canvas");
-var seed = new Node("seed");
-var peer = new Node("peer");
-peer.left = 150;
-function createTransmissions(pieceCount) {
-    var transmissions = [];
-    for (var i = 0; i < pieceCount; i++) {
-        transmissions.push(new Transmission(null, seed, i, 0));
+$(function() {
+    $( "#peer-slider" ).slider({
+        min : 1,
+        max : MAX_PEERS,
+        value : 2,
+        slide: function( event, ui ) {
+            peerCount = ui.value;
+            createNodes();
+            transmissions = createTransmissions();
+            canvas.clearCanvas();
+            drawTransmissions(transmissions);
+        }
+    });
+  });
+$(function() {
+    $( "#piece-slider" ).slider({
+        min : 1,
+        max : MAX_PIECES,
+        value : 3,
+        slide: function( event, ui ) {
+            pieceCount = ui.value;
+            transmissions = createTransmissions();
+            canvas.clearCanvas();
+            drawTransmissions(transmissions);
+        }
+    });
+  });
+
+nodes = [];
+seeds = [];
+peers = [];
+function createNodes() {
+    nodes = [];
+    seeds = [];
+    peers = [];
+    for (var i = 0; i < seedCount; i++) {
+        seed = new Node('Seed ' + (i+1));
+        seed.left = i*seed.lineWidth * (MAX_PIECES + 2);
+        nodes.push(seed);
+        seeds.push(seed);
     }
-    for (var i = 0; i < pieceCount; i++) {
-        transmissions.push(new Transmission(seed, peer, i, 20*i));
+    for (var i = 0; i < peerCount; i++) {
+        peer = new Node('Peer ' + (i+1));
+        peer.left = nodes.length*peer.lineWidth * (MAX_PIECES + 2);
+        nodes.push(peer);
+        peers.push(peer);
+    }
+}
+
+var canvas = $("canvas");
+function createTransmissions() {
+    var transmissions = [];
+    for (var i in seeds) {
+        var seed = seeds[i];
+        for (var i = 0; i < pieceCount; i++) {
+            transmissions.push(new Transmission(null, seed, i, 0));
+        }
+    }
+    for (var i in peers) {
+        var peer = peers[i];
+        for (var i = 0; i < pieceCount; i++) {
+            transmissions.push(new Transmission(seed, peer, i, 20*i));
+        }
     }
     
     return transmissions;
@@ -110,5 +161,6 @@ function drawTransmissions(transmissions) {
     }
 }
 
+createNodes();
 var transmissions = createTransmissions(3);
 drawTransmissions(transmissions);
