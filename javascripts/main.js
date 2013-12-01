@@ -1,16 +1,17 @@
 MAX_PIECES = 10;
 MAX_SEEDS = 3;
 MAX_PEERS = 3;
+TRANSMISSION_SPEED = 15;
+MARGIN = 20;
 var seedCount = 1;
 var peerCount = 2;
 var pieceCount = 3;
 
 function Node(name) {
     this.name = name;
-    this.lineWidth = 10;
-    this.sendTime = 20;
+    this.lineWidth = 8;
     this.left = 0;
-    this.bottom = MAX_PIECES*this.sendTime;
+    this.bottom = MAX_PIECES*TRANSMISSION_SPEED*(MAX_PEERS+MAX_SEEDS); 
 }
 
 /**
@@ -26,8 +27,8 @@ function Transmission(sender, receiver, pieceNum, startTime) {
     this.receiver = receiver;
     this.pieceNum = pieceNum;
     this.startTime = startTime;
-    this.offsetX = 20;
-    this.offsetY = 20;
+    this.offsetX = MARGIN;
+    this.offsetY = MARGIN;
     this.transmissionTime = 20;
     this.outlineShade = (256/pieceCount) & 255;
     this.outlineColour = "rgb(" + [this.outlineShade-1, 
@@ -144,10 +145,22 @@ function createTransmissions() {
             transmissions.push(new Transmission(null, seed, i, 0));
         }
     }
-    for (var i in peers) {
+    for (var i = 0; i < peers.length; i++) {
         var peer = peers[i];
-        for (var i = 0; i < pieceCount; i++) {
-            transmissions.push(new Transmission(seed, peer, i, 20*i));
+        var pieces = [];
+        for (var j = 0; j < pieceCount; j++) {
+            pieces.push(j);
+        }
+        shuffle(pieces);
+        var time = 0;
+        for (var j in pieces) {
+            var pieceIndex = pieces[j];
+            seedIndex = Math.floor(seedCount * Math.random());
+            var seed = seeds[seedIndex];
+            var transmission = new Transmission(seed, peer, pieceIndex, time);
+            transmission.transmissionTime = (i + seedCount - seedIndex) * 15;
+            time += transmission.transmissionTime;
+            transmissions.push(transmission);
         }
     }
     
@@ -161,6 +174,27 @@ function drawTransmissions(transmissions) {
     }
 }
 
+function shuffle(array) {
+    var counter = array.length, temp, index;
+
+    // While there are elements in the array
+    while (counter > 0) {
+        // Pick a random index
+        index = Math.floor(Math.random() * counter);
+
+        // Decrease counter by 1
+        counter--;
+
+        // And swap the last element with it
+        temp = array[counter];
+        array[counter] = array[index];
+        array[index] = temp;
+    }
+
+    return array;
+}
+
 createNodes();
+canvas.attr("height", nodes[0].bottom + 2 * MARGIN);
 var transmissions = createTransmissions(3);
 drawTransmissions(transmissions);
